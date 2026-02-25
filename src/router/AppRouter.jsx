@@ -1,9 +1,9 @@
 // src/router/AppRouter.jsx
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-// Public
+// Public Pages
 const LandingPage = lazy(() => import('../views/public/LandingPage'));
 const AboutPage = lazy(() => import('../views/public/AboutPage'));
 const HowItWorksPage = lazy(() => import('../views/public/HowItWorksPage'));
@@ -13,7 +13,7 @@ const PrivacyPage = lazy(() => import('../views/public/PrivacyPage'));
 const TermsPage = lazy(() => import('../views/public/TermsPage'));
 const KvkkPage = lazy(() => import('../views/public/KvkkPage'));
 
-// Auth
+// Auth Pages
 const LoginPage = lazy(() => import('../views/auth/LoginPage'));
 const RegisterPage = lazy(() => import('../views/auth/RegisterPage'));
 const EmailVerifyPage = lazy(() => import('../views/auth/EmailVerifyPage'));
@@ -24,7 +24,7 @@ const AccountActivatedPage = lazy(() => import('../views/auth/AccountActivatedPa
 // Onboarding
 const OnboardingPage = lazy(() => import('../views/onboarding/OnboardingPage'));
 
-// App
+// App - Protected Pages
 const DashboardPage = lazy(() => import('../views/app/DashboardPage'));
 const MatchesPage = lazy(() => import('../views/app/MatchesPage'));
 const SessionsPage = lazy(() => import('../views/app/SessionsPage'));
@@ -34,16 +34,20 @@ const SurveyPage = lazy(() => import('../views/app/SurveyPage'));
 // System
 const NotFoundPage = lazy(() => import('../views/system/NotFoundPage'));
 
+// Loading fallback
 const LoadingFallback = () => (
   <div className="min-h-screen bg-ink flex items-center justify-center">
     <div className="flex flex-col items-center gap-4">
-      <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin"
-        style={{ borderColor: 'rgba(232,160,32,0.3)', borderTopColor: 'var(--amber)' }} />
+      <div
+        className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin"
+        style={{ borderColor: 'rgba(232,160,32,0.3)', borderTopColor: 'var(--amber)' }}
+      />
       <p className="text-sm font-body" style={{ color: 'var(--mist)' }}>Yükleniyor...</p>
     </div>
   </div>
 );
 
+// Protected Route
 const ProtectedRoute = ({ children, requireOnboarding = true }) => {
   const { currentUser, isOnboardingComplete, loading } = useAuth();
   if (loading) return <LoadingFallback />;
@@ -52,6 +56,7 @@ const ProtectedRoute = ({ children, requireOnboarding = true }) => {
   return children;
 };
 
+// Auth Route (login/register)
 const AuthRoute = ({ children }) => {
   const { currentUser, isOnboardingComplete, loading } = useAuth();
   if (loading) return <LoadingFallback />;
@@ -62,8 +67,9 @@ const AuthRoute = ({ children }) => {
   return children;
 };
 
+// AppRouter
 const AppRouter = () => (
-  <BrowserRouter>
+  <HashRouter>
     <Suspense fallback={<LoadingFallback />}>
       <Routes>
         {/* Public */}
@@ -101,7 +107,7 @@ const AppRouter = () => (
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>
-  </BrowserRouter>
+  </HashRouter>
 );
 
 export default AppRouter;
